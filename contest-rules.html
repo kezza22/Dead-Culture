@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Official Rules — Dead Culture Poetry & Short Story Contest</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9760;</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #0B0B0C;
+    --ink: #E7E4DD;
+    --ink-soft: #8C8880;
+    --rule: #29282A;
+    --blood: #8A1216;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  :root[data-theme="light"] {
+    --void: #F1EFEA; --ink: #17151A; --ink-soft: #5C5852; --rule: #D7D2C8; --blood: #7A1014;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--void); color: var(--ink);
+    font-family: 'Inter', sans-serif; line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 60px 24px 80px; }
+  .kicker { font-size: 11px; letter-spacing: 0.22em; color: var(--blood); text-align: center; margin: 0 0 14px; text-transform: uppercase; }
+  h1 {
+    font-family: 'Cinzel', serif; font-size: clamp(28px, 7vw, 38px); font-weight: 600;
+    text-align: center; margin: 0 0 10px; letter-spacing: 0.02em; text-transform: uppercase;
+  }
+  .updated { text-align: center; color: var(--ink-soft); font-size: 13px; margin: 0 0 40px; }
+  hr { border: none; border-top: 1px solid var(--rule); margin: 32px 0; }
+  h2 {
+    font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600; margin: 0 0 12px;
+    display: flex; align-items: baseline; gap: 10px; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  h2 .num { color: var(--blood); font-family: 'Inter', sans-serif; font-size: 13px; }
+  section { margin-bottom: 30px; }
+  p, li { font-size: 15.5px; color: var(--ink); margin: 0 0 10px; }
+  ul, ol { padding-left: 20px; margin: 0; }
+  li { margin-bottom: 8px; }
+  .soft { color: var(--ink-soft); font-size: 13.5px; }
+  a { color: var(--blood); }
+  footer { text-align: center; margin-top: 48px; font-size: 12px; color: var(--ink-soft); }
+  .setup-note {
+    font-size: 12px; color: var(--ink-soft); background: color-mix(in srgb, var(--blood) 8%, transparent);
+    border: 1px dashed var(--rule); padding: 14px 16px; margin-top: 40px;
+  }
+  .setup-note code { color: var(--blood); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">Official Rules</p>
+  <h1>Dead Culture</h1>
+  <p class="updated">Poetry & Short Story Contest — last updated <span id="updatedDate">22 September 2026</span></p>
+
+  <hr>
+
+  <section>
+    <h2><span class="num">1</span> Eligibility</h2>
+    <ul>
+      <li>All contestants must be over the age of 18.</li>
+      <li>Entry is open to anyone worldwide unless otherwise stated.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span> Entry requirements</h2>
+    <ul>
+      <li>Only submissions in English will be accepted.</li>
+      <li>No AI-generated submissions. Work will be checked, and any AI-generated entries will be disqualified.</li>
+      <li>Submissions must be your own original, previously unpublished work.</li>
+      <li>Entries must not exceed 500 words.</li>
+      <li>One entry per person per fee paid.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> Fees & payment</h2>
+    <ul>
+      <li>The entry fee is <strong id="feeAmount">£5</strong>, payable via PayPal before submitting.</li>
+      <li>Entry fees are non-refundable, including for disqualified entries.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span> Deadline</h2>
+    <p>Entries must be received by <strong id="deadlineDate">31 October 2026</strong>. Late entries will not be considered.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">5</span> Judging</h2>
+    <ul>
+      <li>Entries are judged on originality, craft, and impact.</li>
+      <li>The judges' decision is final, and no correspondence will be entered into regarding results.</li>
+      <li>Winners will be notified by email within <span id="notifyWindow">14 days</span> of the deadline.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">6</span> Prizes</h2>
+    <p id="prizeText">First prize: £100 and publication on our Instagram, @Dead_Culture_Press. Details of any further prizes will be announced alongside the winner.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">7</span> Rights & copyright</h2>
+    <p>You retain full copyright of your work. By entering, you grant the organiser a one-time, non-exclusive right to publish your work on Instagram (with credit to you) if it is shortlisted or wins.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">8</span> Disqualification</h2>
+    <p>The organiser reserves the right to disqualify any entry that breaches these rules, without refund of the entry fee.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">9</span> Your data</h2>
+    <p>Your name, email, and Instagram handle are used only to administer this contest and contact winners. They will not be shared with third parties or used for any other purpose.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">10</span> Contact</h2>
+    <p class="soft">Questions about these rules or your entry? Message us on Instagram <span id="contactHandle">@Dead_Culture_Press</span>.</p>
+  </section>
+
+  <div class="setup-note">
+    <strong>Setup — replace before sharing:</strong> update the fee, deadline, prize and notification window above to match your entry page.
+  </div>
+
+  <footer>Dead Culture Poetry & Short Story Contest</footer>
+</div>
+</body>
+</html>
