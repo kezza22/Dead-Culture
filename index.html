@@ -72,21 +72,6 @@
   }
   .btn:hover { background: var(--blood-dim); }
   .btn:focus-visible { outline: 1px solid var(--blood); outline-offset: 3px; }
-  .status {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink-soft); margin-bottom: 18px;
-  }
-  .status .dot { width: 6px; height: 6px; background: var(--blood); }
-  label { display: block; font-size: 12px; letter-spacing: 0.05em; color: var(--ink-soft); margin: 18px 0 6px; text-transform: uppercase; }
-  input[type="text"] {
-    width: 100%; font-family: 'Inter', sans-serif; font-size: 15px;
-    padding: 12px 14px; border: 1px solid var(--rule); background: var(--void); color: var(--ink);
-  }
-  input[type="text"]:focus-visible { outline: 1px solid var(--blood); }
-  .hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
-  .stage { display: none; }
-  .stage.active { display: block; }
   footer { text-align: center; margin-top: 48px; font-size: 12px; color: var(--ink-soft); }
   .setup-note {
     font-size: 12px; color: var(--ink-soft); background: color-mix(in srgb, var(--blood) 8%, transparent);
@@ -135,26 +120,10 @@
     <p style="margin-top:10px"><a id="rulesLink" href="#" target="_blank" rel="noopener" style="color:var(--blood)">For our full list of rules and terms, click here</a></p>
   </div>
 
-  <div class="stage" id="stagePay">
-    <div class="card">
-      <h2>Step 1 — Pay Entry Fee</h2>
-      <p>Entry opens once payment is confirmed. You'll be sent to PayPal, then brought straight back here.</p>
-      <a class="btn" id="payButton" href="#" target="_top">Pay Entry Fee with PayPal</a>
-    </div>
-  </div>
-
-  <div class="stage" id="stageSubmit">
-    <div class="status"><span class="dot"></span>Payment Received</div>
-    <div class="card">
-      <h2>Step 2 — Submit Your Work</h2>
-      <p>One last thing before the submission form: enter the transaction ID from your PayPal receipt email, so your entry can be matched to your payment.</p>
-      <label for="txnId">PayPal Transaction ID</label>
-      <input type="text" id="txnId" placeholder="e.g. 9AB123456C789012D" autocomplete="off">
-      <div class="hint">Found in the confirmation email PayPal just sent you.</div>
-      <div style="margin-top:22px">
-        <a class="btn" id="formButton" href="#" target="_blank" rel="noopener">Continue to Submission Form</a>
-      </div>
-    </div>
+  <div class="card">
+    <h2>Ready to Enter?</h2>
+    <p>Fill in your details and submit your work. You'll pay the entry fee on the next step, straight after.</p>
+    <a class="btn" href="entry-form.html">Begin Entry</a>
   </div>
 
   <footer>Questions about your entry? Message us on Instagram — @Dead_Culture_Press</footer>
@@ -162,8 +131,6 @@
 
 <script>
   const CONFIG = {
-    paypalLink: "https://www.paypal.com/ncp/payment/JKNPD2VXLGTZ6",
-    googleFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdnoZEAF4MrfsQgz7ovmJyuuU72slB5o4xg1amXf7C3SCeIvg/viewform",
     fee: "£5",
     deadline: "31 October 2026",
     prize: "£100 + publication on Instagram",
@@ -174,31 +141,6 @@
   document.getElementById('deadlineDisplay').textContent = CONFIG.deadline;
   document.getElementById('prizeDisplay').textContent = CONFIG.prize;
   document.getElementById('rulesLink').href = CONFIG.rulesUrl;
-
-  const payButton = document.getElementById('payButton');
-  const formButton = document.getElementById('formButton');
-  payButton.href = CONFIG.paypalLink;
-
-  const params = new URLSearchParams(window.location.search);
-  const paid = params.get('paid') === '1' || params.get('tx') || params.get('st') === 'Completed';
-
-  const stagePay = document.getElementById('stagePay');
-  const stageSubmit = document.getElementById('stageSubmit');
-
-  if (paid) { stageSubmit.classList.add('active'); } else { stagePay.classList.add('active'); }
-
-  const txnInput = document.getElementById('txnId');
-  formButton.addEventListener('click', function (e) {
-    const id = txnInput.value.trim();
-    if (!id) {
-      e.preventDefault();
-      txnInput.focus();
-      txnInput.style.borderColor = 'var(--blood)';
-      return;
-    }
-    formButton.href = CONFIG.googleFormUrl;
-  });
 </script>
 </body>
 </html>
-  
