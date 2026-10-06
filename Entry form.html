@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Enter — Dead Culture</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9760;</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #0B0B0C; --ink: #E7E4DD; --ink-soft: #8C8880; --rule: #29282A;
+    --blood: #8A1216; --blood-dim: #631014;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  :root[data-theme="light"] {
+    --void: #F1EFEA; --ink: #17151A; --ink-soft: #5C5852; --rule: #D7D2C8; --blood: #7A1014; --blood-dim: #9C2C30;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; background: var(--void); color: var(--ink);
+    font-family: 'Inter', sans-serif; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 600px; margin: 0 auto; padding: 56px 24px 80px; }
+  .masthead { text-align: center; margin-bottom: 36px; }
+  .masthead .kicker { font-size: 11px; letter-spacing: 0.22em; color: var(--blood); margin: 0 0 14px; text-transform: uppercase; }
+  .masthead h1 {
+    font-family: 'Cinzel', serif; font-size: clamp(26px, 7vw, 36px); font-weight: 600;
+    margin: 0; letter-spacing: 0.02em; text-transform: uppercase;
+  }
+  .masthead p { color: var(--ink-soft); margin: 14px 0 0; font-size: 13.5px; }
+  .progress { display: flex; gap: 6px; margin: 28px 0 36px; }
+  .progress span { height: 2px; flex: 1; background: var(--rule); }
+  .progress span.active { background: var(--blood); }
+  fieldset { border: none; padding: 0; margin: 0 0 28px; }
+  legend {
+    font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--blood); margin-bottom: 16px; padding: 0;
+  }
+  label {
+    display: block; font-size: 12px; letter-spacing: 0.04em; color: var(--ink-soft);
+    margin: 0 0 6px; text-transform: uppercase;
+  }
+  .field { margin-bottom: 18px; }
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 15px;
+    padding: 12px 14px; border: 1px solid var(--rule); background: var(--void); color: var(--ink);
+    -webkit-appearance: none; appearance: none; border-radius: 0;
+  }
+  select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path d="M1 1l5 5 5-5" stroke="%238C8880" stroke-width="1.5" fill="none"/></svg>');
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  textarea { resize: vertical; min-height: 160px; }
+  input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 1px solid var(--blood); }
+  .hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+  .wordcount { font-size: 12px; color: var(--ink-soft); margin-top: 6px; text-align: right; }
+  .wordcount.over { color: var(--blood); }
+  .checkline {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; cursor: pointer;
+  }
+  .checkline input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none; width: 18px; height: 18px; flex-shrink: 0;
+    border: 1px solid var(--rule); background: var(--void); margin-top: 1px; cursor: pointer;
+    position: relative;
+  }
+  .checkline input[type="checkbox"]:checked { background: var(--blood); border-color: var(--blood); }
+  .checkline input[type="checkbox"]:checked::after {
+    content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+    border: solid var(--void); border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .checkline span { font-size: 14px; color: var(--ink); }
+  .btn {
+    display: inline-block; width: 100%; text-align: center;
+    background: var(--blood); color: #F1EFEA;
+    font-weight: 600; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; padding: 16px 20px; border: none; cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .btn:hover { background: var(--blood-dim); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .error-text {
+    display: none; font-size: 12px; color: var(--blood); margin-top: 6px;
+  }
+  .field.error input, .field.error textarea, .field.error select { border-color: var(--blood); }
+  .field.error .error-text { display: block; }
+  .back-link {
+    display: inline-block; margin-bottom: 24px; color: var(--ink-soft);
+    text-decoration: none; font-size: 13px;
+  }
+  .back-link:hover { color: var(--blood); }
+  .status-banner {
+    font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 16px; min-height: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&larr; Back</a>
+
+  <div class="masthead">
+    <p class="kicker">Entry Form</p>
+    <h1>Submit Your Work</h1>
+    <p>Fill in your details below. You'll pay the entry fee on the next step.</p>
+  </div>
+
+  <div class="progress"><span class="active"></span><span></span></div>
+
+  <form id="entryForm" novalidate>
+
+    <fieldset>
+      <legend>Your Details</legend>
+
+      <div class="field" id="field-name">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" autocomplete="name" required>
+        <div class="error-text">Please enter your full name.</div>
+      </div>
+
+      <div class="field" id="field-email">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" autocomplete="email" required>
+        <div class="error-text">Please enter a valid email address.</div>
+      </div>
+
+      <div class="field" id="field-instagram">
+        <label for="instagram">Instagram Handle</label>
+        <input type="text" id="instagram" placeholder="@yourhandle" autocomplete="off" required>
+        <div class="error-text">Please enter your Instagram handle.</div>
+      </div>
+
+      <div class="field" id="field-country">
+        <label for="country">Country</label>
+        <input type="text" id="country" autocomplete="country-name" required>
+        <div class="error-text">Please enter your country.</div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Your Submission</legend>
+
+      <div class="field" id="field-category">
+        <label for="category">Category</label>
+        <select id="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="Poetry">Poetry</option>
+          <option value="Short Fiction">Short Fiction</option>
+          <option value="Opinion Pieces">Opinion Pieces</option>
+        </select>
+        <div class="error-text">Please select a category.</div>
+      </div>
+
+      <div class="field" id="field-title">
+        <label for="subTitle">Submission Title</label>
+        <input type="text" id="subTitle" required>
+        <div class="error-text">Please enter a title.</div>
+      </div>
+
+      <div class="field" id="field-text">
+        <label for="subText">Your Submission (max 500 words)</label>
+        <textarea id="subText" required></textarea>
+        <div class="wordcount" id="wordCount">0 / 500 words</div>
+        <div class="error-text">Please paste your submission (500 words or fewer).</div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>A Little More</legend>
+
+      <div class="field" id="field-bio">
+        <label for="bio">Short Bio <span style="text-transform:none">(optional, for publication if you win)</span></label>
+        <textarea id="bio" style="min-height:80px"></textarea>
+      </div>
+
+      <div class="field" id="field-heard">
+        <label for="heard">How Did You Hear About This Contest? <span style="text-transform:none">(optional)</span></label>
+        <input type="text" id="heard">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Confirm & Agree</legend>
+
+      <label class="checkline">
+        <input type="checkbox" id="check18" required>
+        <span>I confirm I am 18 or over.</span>
+      </label>
+      <label class="checkline">
+        <input type="checkbox" id="checkOriginal" required>
+        <span>I confirm this is my own original, unpublished work.</span>
+      </label>
+      <label class="checkline">
+        <input type="checkbox" id="checkRules" required>
+        <span>I agree to the <a href="contest-rules.html" target="_blank" rel="noopener" style="color:var(--blood)">contest rules and terms</a>.</span>
+      </label>
+      <div class="error-text" id="checkError" style="margin-top:4px">Please confirm all three boxes above before continuing.</div>
+    </fieldset>
+
+    <button type="submit" class="btn" id="submitBtn">Continue to Payment</button>
+    <div class="status-banner" id="statusBanner"></div>
+  </form>
+
+</div>
+
+<!-- Hidden iframe + form used to silently submit into the Google Form's spreadsheet -->
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+<form id="gform" action="https://docs.google.com/forms/d/e/1FAIpQLSdnoZEAF4MrfsQgz7ovmJyuuU72slB5o4xg1amXf7C3SCeIvg/formResponse" method="POST" target="hidden_iframe" style="display:none;">
+  <input name="entry.171891443" id="gf_name">
+  <input name="entry.1204429339" id="gf_email">
+  <input name="entry.1139516332" id="gf_instagram">
+  <input name="entry.526536414" id="gf_ref">
+  <input name="entry.1916283702" id="gf_category">
+  <input name="entry.1242383256" id="gf_title">
+  <input name="entry.2006264425" id="gf_text">
+  <input name="entry.1845658907" id="gf_country">
+  <input name="entry.1315774653" id="gf_bio">
+  <input name="entry.1585782391" id="gf_heard">
+  <input name="entry.214945777" id="gf_check18">
+  <input name="entry.1448325565" id="gf_checkOriginal">
+  <input name="entry.49179661" id="gf_checkRules">
+</form>
+
+<script>
+  const CONFIG = {
+    paypalLink: "https://www.paypal.com/ncp/payment/JKNPD2VXLGTZ6"
+  };
+
+  const form = document.getElementById('entryForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusBanner = document.getElementById('statusBanner');
+  const subText = document.getElementById('subText');
+  const wordCount = document.getElementById('wordCount');
+
+  function countWords(str) {
+    const trimmed = str.trim();
+    return trimmed === '' ? 0 : trimmed.split(/\s+/).length;
+  }
+
+  subText.addEventListener('input', () => {
+    const n = countWords(subText.value);
+    wordCount.textContent = n + ' / 500 words';
+    wordCount.classList.toggle('over', n > 500);
+  });
+
+  function showError(fieldId, show) {
+    const el = document.getElementById(fieldId);
+    if (el) el.classList.toggle('error', show);
+  }
+
+  function validate() {
+    let valid = true;
+
+    const fullName = document.getElementById('fullName').value.trim();
+    showError('field-name', !fullName);
+    if (!fullName) valid = false;
+
+    const email = document.getElementById('email').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    showError('field-email', !emailOk);
+    if (!emailOk) valid = false;
+
+    const instagram = document.getElementById('instagram').value.trim();
+    showError('field-instagram', !instagram);
+    if (!instagram) valid = false;
+
+    const country = document.getElementById('country').value.trim();
+    showError('field-country', !country);
+    if (!country) valid = false;
+
+    const category = document.getElementById('category').value;
+    showError('field-category', !category);
+    if (!category) valid = false;
+
+    const subTitle = document.getElementById('subTitle').value.trim();
+    showError('field-title', !subTitle);
+    if (!subTitle) valid = false;
+
+    const subTextVal = subText.value.trim();
+    const wc = countWords(subTextVal);
+    const textOk = subTextVal.length > 0 && wc <= 500;
+    showError('field-text', !textOk);
+    if (!textOk) valid = false;
+
+    const c1 = document.getElementById('check18').checked;
+    const c2 = document.getElementById('checkOriginal').checked;
+    const c3 = document.getElementById('checkRules').checked;
+    const checksOk = c1 && c2 && c3;
+    document.getElementById('checkError').style.display = checksOk ? 'none' : 'block';
+    if (!checksOk) valid = false;
+
+    return valid;
+  }
+
+  function generateRef() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = 'DC-';
+    for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    return code;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!validate()) {
+      statusBanner.textContent = 'Please fix the highlighted fields above.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    statusBanner.textContent = '';
+
+    const ref = generateRef();
+    const fullName = document.getElementById('fullName').value.trim();
+
+    // Save for the confirmation page after PayPal returns
+    try {
+      localStorage.setItem('dcEntryRef', ref);
+      localStorage.setItem('dcEntryName', fullName);
+    } catch (err) {}
+
+    // Populate hidden Google Form and submit silently
+    document.getElementById('gf_name').value = fullName;
+    document.getElementById('gf_email').value = document.getElementById('email').value.trim();
+    document.getElementById('gf_instagram').value = document.getElementById('instagram').value.trim();
+    document.getElementById('gf_ref').value = ref;
+    document.getElementById('gf_category').value = document.getElementById('category').value;
+    document.getElementById('gf_title').value = document.getElementById('subTitle').value.trim();
+    document.getElementById('gf_text').value = subText.value.trim();
+    document.getElementById('gf_country').value = document.getElementById('country').value.trim();
+    document.getElementById('gf_bio').value = document.getElementById('bio').value.trim();
+    document.getElementById('gf_heard').value = document.getElementById('heard').value.trim();
+    document.getElementById('gf_check18').value = 'Agree';
+    document.getElementById('gf_checkOriginal').value = 'Agree';
+    document.getElementById('gf_checkRules').value = 'Agree';
+
+    document.getElementById('gform').submit();
+
+    statusBanner.textContent = 'Entry recorded. Redirecting you to payment…';
+
+    setTimeout(function () {
+      window.top.location.href = CONFIG.paypalLink;
+    }, 900);
+  });
+</script>
+</body>
+</html>
