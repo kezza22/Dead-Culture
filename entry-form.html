@@ -103,6 +103,24 @@
   .status-banner {
     font-size: 13px; color: var(--ink-soft); text-align: center; margin-top: 16px; min-height: 18px;
   }
+  .ref-reveal {
+    display: none; border: 1px solid var(--rule); padding: 18px; margin-top: 20px; text-align: center;
+  }
+  .ref-reveal .label { font-size: 11px; letter-spacing: 0.1em; color: var(--ink-soft); text-transform: uppercase; margin-bottom: 8px; }
+  .ref-reveal .code { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 0.05em; color: var(--blood); }
+  .ref-reveal .note { font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+  .warn-box {
+    display: none; border: 1px dashed var(--blood); background: color-mix(in srgb, var(--blood) 8%, transparent);
+    padding: 16px; margin-top: 16px; font-size: 13.5px; color: var(--ink);
+  }
+  .warn-box strong { color: var(--blood); }
+  .warn-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .btn-secondary {
+    flex: 1; text-align: center; background: transparent; color: var(--ink);
+    font-weight: 600; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    border: 1px solid var(--rule); padding: 12px 14px; cursor: pointer;
+  }
+  .btn-secondary:hover { border-color: var(--blood); color: var(--blood); }
 </style>
 </head>
 <body>
@@ -210,6 +228,21 @@
 
     <button type="submit" class="btn" id="submitBtn">Continue to Payment</button>
     <div class="status-banner" id="statusBanner"></div>
+
+    <div class="ref-reveal" id="refReveal">
+      <div class="label">Your Entry Reference</div>
+      <div class="code" id="refCodeDisplay">—</div>
+      <div class="note">Save or screenshot this code now. You'll need it if we ever have to match up your payment.</div>
+    </div>
+
+    <div class="warn-box" id="warnBox">
+      <strong>We couldn't confirm your entry saved to our system.</strong>
+      <div>Please screenshot your reference code above now. You can try submitting again below, or continue to payment and message us the reference code on Instagram <strong>@Dead_Culture_Press</strong> so we can confirm it manually.</div>
+      <div class="warn-actions">
+        <button type="button" class="btn-secondary" id="retryBtn">Try Again</button>
+        <button type="button" class="btn-secondary" id="continueAnywayBtn">Continue to Payment Anyway</button>
+      </div>
+    </div>
   </form>
 
 </div>
@@ -310,27 +343,41 @@
     return code;
   }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!validate()) {
-      statusBanner.textContent = 'Please fix the highlighted fields above.';
-      return;
-    }
+  const refReveal = document.getElementById('refReveal');
+  const refCodeDisplay = document.getElementById('refCodeDisplay');
+  const warnBox = document.getElementById('warnBox');
+  const retryBtn = document.getElementById('retryBtn');
+  const continueAnywayBtn = document.getElementById('continueAnywayBtn');
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting…';
-    statusBanner.textContent = '';
+  let currentRef = null;
 
-    const ref = generateRef();
+  // Resolves true if the hidden iframe reports a load within timeoutMs,
+  // false otherwise. Due to cross-origin restrictions this can't confirm
+  // Google actually recorded the row, but if the request is blocked
+  // entirely (ad blockers, offline, etc.) the load event typically never
+  // fires, so this catches the most common silent-failure cases.
+  function waitForIframeLoad(timeoutMs) {
+    return new Promise((resolve) => {
+      let done = false;
+      const iframe = document.getElementById('hidden_iframe');
+      function onLoad() {
+        if (done) return;
+        done = true;
+        iframe.removeEventListener('load', onLoad);
+        resolve(true);
+      }
+      iframe.addEventListener('load', onLoad);
+      setTimeout(() => {
+        if (done) return;
+        done = true;
+        iframe.removeEventListener('load', onLoad);
+        resolve(false);
+      }, timeoutMs);
+    });
+  }
+
+  function populateAndSubmitGform(ref) {
     const fullName = document.getElementById('fullName').value.trim();
-
-    // Save for the confirmation page after PayPal returns
-    try {
-      localStorage.setItem('dcEntryRef', ref);
-      localStorage.setItem('dcEntryName', fullName);
-    } catch (err) {}
-
-    // Populate hidden Google Form and submit silently
     document.getElementById('gf_name').value = fullName;
     document.getElementById('gf_email').value = document.getElementById('email').value.trim();
     document.getElementById('gf_instagram').value = document.getElementById('instagram').value.trim();
@@ -345,13 +392,74 @@
     document.getElementById('gf_checkOriginal').value = 'Agree';
     document.getElementById('gf_checkRules').value = 'Agree';
 
+    const loadPromise = waitForIframeLoad(5000);
     document.getElementById('gform').submit();
+    return loadPromise;
+  }
 
-    statusBanner.textContent = 'Entry recorded. Redirecting you to payment…';
-
+  function goToPayment() {
+    statusBanner.textContent = 'Redirecting you to payment…';
     setTimeout(function () {
       window.top.location.href = CONFIG.paypalLink;
     }, 900);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!validate()) {
+      statusBanner.textContent = 'Please fix the highlighted fields above.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    statusBanner.textContent = '';
+    warnBox.style.display = 'none';
+
+    const ref = generateRef();
+    currentRef = ref;
+    const fullName = document.getElementById('fullName').value.trim();
+
+    // Save for the confirmation page after PayPal returns
+    try {
+      localStorage.setItem('dcEntryRef', ref);
+      localStorage.setItem('dcEntryName', fullName);
+    } catch (err) {}
+
+    // Show the reference immediately, regardless of what happens next,
+    // so the entrant has it on screen even if something downstream fails.
+    refCodeDisplay.textContent = ref;
+    refReveal.style.display = 'block';
+
+    const loaded = await populateAndSubmitGform(ref);
+
+    if (loaded) {
+      submitBtn.textContent = 'Submitted';
+      goToPayment();
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Continue to Payment';
+      statusBanner.textContent = '';
+      warnBox.style.display = 'block';
+    }
+  });
+
+  retryBtn.addEventListener('click', async function () {
+    if (!currentRef) return;
+    retryBtn.disabled = true;
+    retryBtn.textContent = 'Retrying…';
+    const loaded = await populateAndSubmitGform(currentRef);
+    retryBtn.disabled = false;
+    retryBtn.textContent = 'Try Again';
+    if (loaded) {
+      warnBox.style.display = 'none';
+      submitBtn.textContent = 'Submitted';
+      goToPayment();
+    }
+  });
+
+  continueAnywayBtn.addEventListener('click', function () {
+    goToPayment();
   });
 </script>
 </body>
